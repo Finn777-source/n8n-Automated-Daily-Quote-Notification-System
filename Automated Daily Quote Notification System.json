@@ -1,0 +1,132 @@
+{
+  "name": "Automated Daily Quote Notification System",
+  "nodes": [
+    {
+      "parameters": {
+        "triggerTimes": {
+          "item": [
+            {
+              "hour": 8
+            }
+          ]
+        }
+      },
+      "name": "Daily Trigger",
+      "type": "n8n-nodes-base.cron",
+      "typeVersion": 1,
+      "position": [
+        -112,
+        -240
+      ],
+      "id": "9b526d79-fa3c-4793-b3c6-239966aadd36"
+    },
+    {
+      "parameters": {
+        "url": "https://api.quotable.io/random",
+        "allowUnauthorizedCerts": true,
+        "options": {}
+      },
+      "name": "Get Quote",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 2,
+      "position": [
+        112,
+        -240
+      ],
+      "id": "05528b3a-4482-488e-8f16-a4dc7038d95b"
+    },
+    {
+      "parameters": {
+        "keepOnlySet": true,
+        "values": {
+          "string": [
+            {
+              "name": "emailText",
+              "value": "={{\"💡 Tageszitat:\\n\\n\" + $json.content + \"\\n\\n— \" + $json.author}}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "name": "Format Quote",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 2,
+      "position": [
+        336,
+        -240
+      ],
+      "id": "f5b90f16-4d22-42c8-9b5d-c44454170a87"
+    },
+    {
+      "parameters": {
+        "sendTo": "naumann.media@gmail.com",
+        "subject": "Dein Tageszitat",
+        "message": "={{$json.emailText}}",
+        "options": {}
+      },
+      "name": "Send via Gmail",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2,
+      "position": [
+        560,
+        -240
+      ],
+      "id": "9c714897-aef1-4237-81d7-0f732d9cf0ff",
+      "webhookId": "093381b8-2a51-47fa-bac7-621b542ef9c5",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "QPPGZJANKIRFa5vC",
+          "name": "Gmail account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Daily Trigger": {
+      "main": [
+        [
+          {
+            "node": "Get Quote",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Quote": {
+      "main": [
+        [
+          {
+            "node": "Format Quote",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Format Quote": {
+      "main": [
+        [
+          {
+            "node": "Send via Gmail",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": false
+  },
+  "versionId": "b352a08b-b7dd-4b30-aa2b-dea572cb6ae8",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "6f89b73f03fe0d1b7ef1fb545d7c6d70d5dc76a8961ddd153d4a10bb32b1726d"
+  },
+  "id": "10Pa-9MDwDbLVgQTALHgn",
+  "tags": []
+}
